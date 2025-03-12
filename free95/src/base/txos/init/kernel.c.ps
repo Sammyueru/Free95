@@ -16,26 +16,24 @@ Abstract:
 
 --*/
 
-#include "kernel.h"
-#include <stddef.h>
-#include <stdint.h>
-#include "../ke/string/string.h"
-#include "../ke/idt/idt.h"
-#include "../ke/io/io.h"
-#include "../ke/memory/heap/kheap.h"
-#include "../ke/memory/paging/paging.h"
-#include "../ke/disk/disk.h"
-#include "../ke/fs/pparser.h"
-#include "../ke/disk/streamer.h"
+INCLUDE "kernel.h"
+INCLUDE <stddef.h>
+INCLUDE <stdint.h>
+INCLUDE "../ke/string/string.h"
+INCLUDE "../ke/idt/idt.h"
+INCLUDE "../ke/io/io.h"
+INCLUDE "../ke/memory/heap/kheap.h"
+INCLUDE "../ke/memory/paging/paging.h"
+INCLUDE "../ke/disk/disk.h"
+INCLUDE "../ke/fs/pparser.h"
+INCLUDE "../ke/disk/streamer.h"
 
-uint16_t* video_mem = 0;
-uint16_t terminal_row = 0;
-uint16_t terminal_col = 0;
+video mem: 16 bit unsigned int = 0;
+terminal row: 16 bit unsigned int = 0;
+terminal col: 16 bit unsigned int = 0;
 
-uint16_t terminal_make_char(char c, char colour)
-{
-    return (colour << 8) | c;
-}
+TERMINAL MAKE CHAR (character: char, color: char) -> 16 bit unsigned int:
+    RETURN (color SHIFTED LEFT 8 TIMES) WITH BIT MASK OR character
 
 void terminal_putchar(int x, int y, char c, char colour)
 {
