@@ -12,6 +12,8 @@ SRC   := ./src
 BIN   := ./build/bin
 OBJ   := ./build/free95/obj
 
+rfind  = $(foreach dir,$(wildcard $(1:=/*)),$(call rfind,$(dir),$2) $(filter $(subst *,%,$2), $(dir)))
+
 LDFLAGS := -T ./res/linker.ld -nostdlib
 
 ifeq ($(word 1,$(subst /, ,$(PLATFORM))),x86)
@@ -20,8 +22,8 @@ ifeq ($(word 2,$(subst /, ,$(PLATFORM))),32)
 endif
 endif
 
-SOURCES := $(wildcard $(SRC)/*.c) $(wildcard $(SRC)/**/*.c)
-ASMSRC  := $(wildcard $(SRC)/*.s) $(wildcard $(SRC)/*.asm) $(wildcard $(SRC)/**/*.s) $(wildcard $(SRC)/**/*.asm)
+SOURCES := $(call rfind,$(SRC),*.c)
+ASMSRC  := $(call rfind,$(SRC),*.s) $(call rfind,$(SRC),*.asm)
 ASMOBJ  := $(patsubst $(SRC)/%.s,$(OBJ)/%.s.o,$(ASMSRC))
 COBJ    := $(patsubst $(SRC)/%.c,$(OBJ)/%.c.o,$(SOURCES))
 CFLAGS= -m32 -std=gnu99 -ffreestanding -O2 -Wall -Wextra -fno-exceptions -I$(SRC)
@@ -29,7 +31,7 @@ ASFLAGS=-felf32
 
 all: $(COBJ) $(ASMOBJ) link run
 
-link:
+link: $(COBJ) $(ASMOBJ)
 	mkdir -p $(BIN)
 	ld $(LDFLAGS) -o $(BIN)/nxoskrnl.nef $(ASMOBJ) $(COBJ)
 
